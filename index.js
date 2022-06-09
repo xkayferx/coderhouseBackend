@@ -10,34 +10,6 @@ class Contenedor {
         fs.promises.writeFile(`./${fileName}`,'');
     }
 
-    async save(object) {
-		let data = await fs.promises.readFile(`./${this.fileName}`, 'utf-8')
-		if (!data) {
-			object.id = 1
-			const item = [object]
-			await fs.promises.writeFile(`./${this.fileName}`, JSON.stringify(item))
-			return object.id
-		} else {
-			data = JSON.parse(data)
-			object.id = data.length + 1
-			data.push(object)
-			await fs.promises.writeFile(`./${this.fileName}`, JSON.stringify(data))
-			return object.id
-		}
-	}
-
-	async getById(id) {
-		try {
-			let data = await fs.promises.readFile(`./${this.fileName}`, 'utf-8')
-			data = JSON.parse(data)
-			data = data.find(product => product.id === id)
-			data ? console.log(data) : console.log(null)
-            console.log(`se ha buscado el producto con el id = ${id}`)
-		} catch {
-			console.log('error, no se pudieron leer los productos')
-		}
-	}
-
     async getAll() {
         try{
             let data = await fs.promises.readFile(`./${this.fileName}`, 'utf-8')
@@ -48,36 +20,33 @@ class Contenedor {
             console.log('Error no se puede leer el archivo')
         }
     }
-
-    async deleteById(id){
-        try {
+	
+	async getRandom() {
+		try {
 			let data = await fs.promises.readFile(`./${this.fileName}`, 'utf-8')
 			data = JSON.parse(data)
-			data = data.filter(product => product.id != id)
-			console.log(data)
-            console.log(`se ha eliminado el producto con el id = ${id}`)
+			const randomP = data[Math.floor(Math.random() * data.length)]
+			return randomP
 		} catch {
-			console.log('error, no se pudieron leer los productos')
-		}	
-    }
-
-    async deleteAll() { 
-        try {
-            await fs.promises.writeFile(`./${this.fileName}`, '')
-            console.log('Todos los productos fueron eliminados.')
-        } catch (error) {
-            console.log(`Error: ${error}`)
-        }  
-    }
+			console.log('Error no se puede leer el archivo')
+		}
+	}
 }
 
-app.get('/', (req, res) => {
-	res.send('<p>Hola soy ruta Home</p>')
-});
+const productos = new Contenedor('productos.txt')
 
-app.get('/publicaciones', (req, res) => {
-	res.send('Hola soy ruta Publicaciones')
-});
+const productList = async (req, res) => {
+	const respuesta = await productos.getAll()
+	res.send(respuesta)
+}
+
+const randomProduct = async (req, res) => {
+	const respuesta = await productos.getRandom()
+	res.send(respuesta)
+}
+
+app.get('/productos', productList)
+app.get('/productoRandom', randomProduct)
 
 app.listen(puerto, () => {
 	console.log(`Servidor escuchando en el puerto: ${puerto}`);
