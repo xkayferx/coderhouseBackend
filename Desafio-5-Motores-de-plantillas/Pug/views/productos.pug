@@ -1,0 +1,38 @@
+doctype
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        title App Motor PUG
+        link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css")
+    body
+    main.container
+        h3(style={margin : '2rem 0'})  Lista de Productos
+        if productos.length 
+            //- console.log  #{productos[0].title }
+            table.table.table-bordered.border-dark
+                thead.thead-dark 
+                    tr 
+                    th(scope:'col') Nombre
+                    th(scope:'col') Precio
+                    th(scope:'col') Imagen
+
+                tbody 
+                    
+                    each producto in productos   
+                        tr(scope:'row')
+                        td  #{producto.title}                       
+                        td  #{producto.price }  
+                        td 
+                        
+                         img(src=producto.thumbnail, alt=producto.title, style={width:'3rem'})
+                                
+                    
+        else 
+            p(style={color: 'red'}) No hay ningun producto
+    
+        
+    
+        a(href="/crear" class='btn btn-primary') Crear Productos
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js") 
+
+</html>
